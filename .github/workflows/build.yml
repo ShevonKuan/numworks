@@ -6,7 +6,6 @@ name: Build Electron App For WinMac
 # Workflow's trigger
 on:
   push:
-    #branches: [master]
     tags: [v*]
 
 # Workflow's jobs
