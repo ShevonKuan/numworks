@@ -1,4 +1,4 @@
-name: build win setup file
+name: build mac setup file
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: macos-latest
 
     strategy:
       matrix:
@@ -25,4 +25,4 @@ jobs:
     - name: Build
       run: |
         npm install
-        npm run build-win
+        npm run build-mac
