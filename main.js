@@ -7,6 +7,7 @@ const {
     clipboard,
     Notification,
     dialog,
+    nativeImage,
 } = require("electron");
 const path = require("path");
 
@@ -71,6 +72,16 @@ ipcMain.on("update", (event, arg) => {
     update(arg);
     data = arg;
 });
+ipcMain.on("copy", (event, arg) => {
+    const image = nativeImage.createFromDataURL(arg);
+    clipboard.writeImage(image);
+    notification = new Notification({
+        title: "Numworks",
+        body: "Copy Screenshot Success",
+        silent: true,
+    });
+    notification.show();
+});
 
 const isMac = process.platform === "darwin";
 
@@ -80,15 +91,15 @@ const template = [
         label: "File",
         submenu: [
             {
-                label: "export session to clipboard",
+                label: "Import session from clipboard",
                 click: () => {
-                    export_clipboard(data);
+                    import_clipboard();
                 },
             },
             {
-                label: "import session from clipboard",
+                label: "Export session to clipboard",
                 click: () => {
-                    import_clipboard();
+                    export_clipboard(data);
                 },
             },
             { type: "separator" },
@@ -103,16 +114,27 @@ const template = [
         submenu: [
             { role: "reload" },
             { role: "forceReload" },
-            { role: "toggleDevTools" },
+            { type: "separator" },
+
             { type: "separator" },
             {
-                label: "screenshot",
+                label: "Save screenshot",
                 click: () => {
                     BrowserWindow.getFocusedWindow().webContents.executeJavaScript(
                         "Module.downloadScreenshot()"
                     );
                 },
             },
+            {
+                label: "Copy screenshot",
+                click: () => {
+                    BrowserWindow.getFocusedWindow().webContents.executeJavaScript(
+                        "Module.copyScreenshot()"
+                    );
+                },
+            },
+            { type: "separator" },
+            { role: "toggleDevTools" },
             {
                 label: "reset the calculator",
                 click: () => {

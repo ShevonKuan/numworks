@@ -558,15 +558,22 @@
                             .replace("image/png", "image/octet-stream");
                         link.click();
                     },
+                    copyScreenshot: function () {
+                        this._IonDisplayForceRefresh();
+                        ipcRenderer.send(
+                            "copy",
+                            mainCanvas.toDataURL("image/png")
+                        );
+                    },
                     ionEvents: [],
                     onIonEvent: function (e) {
                         this.ionEvents.push(e);
-                        ipcRenderer.send('update', this.ionEvents);
+                        ipcRenderer.send("update", this.ionEvents);
                         console.log(e);
                     },
                     resetCalculator: function () {
                         this.ionEvents = [];
-                        ipcRenderer.send('update', this.ionEvents);
+                        ipcRenderer.send("update", this.ionEvents);
                         location.reload();
                     },
                 };
@@ -615,8 +622,6 @@
                     Module._IonSimulatorEventsPushEvent(e);
                 });
             });
-            
-            
         </script>
         <!-- <script async src="https://www.numworks.com/simulator/update.js"></script> -->
     </body>

@@ -5,7 +5,8 @@ Numworks图形计算器的electron封装
 
 ## Update:
 - Now you can export or import your session by copy a session code, which has a same format as the numworks website.
-- Now exit the app will not lose your data by storage the session code.
+- Now exit the app will not lose your data by storaging the session code.
+- Now you can share screenshot by pasting from clipboard.
 
 ## TODO:
 - Add more features.
