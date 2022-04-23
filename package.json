@@ -18,9 +18,6 @@
             "target": "nsis",
             "icon": "./icons/win/icon.ico"
         },
-        "linux": {
-            "icon": "./icons/linux/icon.ico"
-        },
         "mac": {
             "icon": "./icons/mac/icon.icns"
         }
