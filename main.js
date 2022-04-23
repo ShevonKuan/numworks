@@ -26,9 +26,7 @@ const template = [
             {
                 label: "screenshot",
                 click: () => { BrowserWindow.getFocusedWindow().webContents.executeJavaScript("Module.downloadScreenshot()") }
-            },
-            { type: 'separator' },
-            { role: 'togglefullscreen' }
+            }
         ]
     },
     {
