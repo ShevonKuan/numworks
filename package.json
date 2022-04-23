@@ -28,5 +28,8 @@
         "build-win": "electron-builder --win --x64",
         "build-mac": "electron-builder --mac",
         "build-linux": "electron-builder --linux"
+    },
+    "dependencies": {
+        "electron-store": "^8.0.1"
     }
 }
