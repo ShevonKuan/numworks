@@ -19,7 +19,7 @@
             "icon": "./icons/win/icon.ico"
         },
         "linux": {
-            "icon": "./icon.ico"
+            "icon": "./icons/linux/icon.ico"
         },
         "mac": {
             "icon": "./icons/mac/icon.icns"
