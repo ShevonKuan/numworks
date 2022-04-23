@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest, macos-latest, ubuntu-latest]
 
     # create steps
     steps:
@@ -56,6 +56,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: build liunx app
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          npm run build-linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # step5: cleanup artifacts in dist_electron
       - name: cleanup artifacts for windows
         if: matrix.os == 'windows-latest'
@@ -66,6 +73,11 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           npx rimraf "dist/!(*.dmg)"
+
+      - name: cleanup artifacts for macosZ
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          npx rimraf "dist/!(*.AppImage)"
 
       # step6: upload artifacts
       - name: upload artifacts

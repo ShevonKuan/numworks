@@ -49,9 +49,9 @@ const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu)
 
 app.setAboutPanelOptions({
-    applicationName: "Numworks",
+    applicationName: "NumWorks",
     applicationVersion: "18.2.2",
-    copyright: "© 2022 Numworks. All rights reserved. NumWorks is a registered trademark. Packaged by ShevonKwan",
+    copyright: "© 2022 NumWorks. All rights reserved. NumWorks is a registered trademark. Packaged by ShevonKwan",
 })
 
 function createWindow() {
