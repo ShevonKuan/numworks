@@ -45,7 +45,7 @@ function import_clipboard() {
         var o = [];
         for (var i = 0; i < e.length; i++) {
             d = e.charCodeAt(i);
-            if (d > 0 && d < 53) {
+            if (d > 0 && d < 157) {
                 o.push(d);
             } else {
                 throw Error;
@@ -136,7 +136,7 @@ const template = [
             { type: "separator" },
             { role: "toggleDevTools" },
             {
-                label: "reset the calculator",
+                label: "Reset the calculator",
                 click: () => {
                     BrowserWindow.getFocusedWindow().webContents.executeJavaScript(
                         "Module.resetCalculator()"
@@ -173,8 +173,8 @@ app.setAboutPanelOptions({
 
 function createWindow() {
     // Create the browser window.
-    const WIDTH = 290;
-    const HEIGHT = 555;
+    const WIDTH = store.get("width") ? store.get("width") : 290;
+    const HEIGHT = store.get("height") ? store.get("height") : 555;
     const mainWindow = new BrowserWindow({
         width: WIDTH,
         height: HEIGHT,
@@ -196,6 +196,10 @@ function createWindow() {
     mainWindow.webContents.on("did-finish-load", () => {
         mainWindow.webContents.send("init", init());
     });
+    mainWindow.on('resize', () => { 
+        store.set("width", mainWindow.getSize()[0]);
+        store.set("height", mainWindow.getSize()[1]);
+    })
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 }
