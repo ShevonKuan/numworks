@@ -173,8 +173,8 @@ app.setAboutPanelOptions({
 
 function createWindow() {
     // Create the browser window.
-    const WIDTH = store.get("width") ? store.get("width") : 290;
-    const HEIGHT = store.get("height") ? store.get("height") : 555;
+    const WIDTH = 290;
+    const HEIGHT = 555;
     const mainWindow = new BrowserWindow({
         width: WIDTH,
         height: HEIGHT,
@@ -196,10 +196,6 @@ function createWindow() {
     mainWindow.webContents.on("did-finish-load", () => {
         mainWindow.webContents.send("init", init());
     });
-    mainWindow.on('resize', () => { 
-        store.set("width", mainWindow.getSize()[0]);
-        store.set("height", mainWindow.getSize()[1]);
-    })
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 }
