@@ -8,7 +8,7 @@
     "author": "shevonkwan",
     "license": "",
     "devDependencies": {
-        "electron": "^18.1.0",
+        "electron": "^21.1.1",
         "electron-builder": "^23.0.3"
     },
     "build": {
