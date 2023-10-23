@@ -27,12 +27,12 @@ jobs:
                   cd epsilon
                   latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
                   git checkout $latest_tag
-            - run: sed -i 's/const char\* Ion::pcbVersion() { return "00.00"; }/const char* Ion::pcbVersion() { return "build by shevon"; }/' ion/src/shared/dummy/platform_info.cpp
-            - run: sed -i 's/FccId = "FCC ID"/FccId = "Build info"/' apps/shared.universal.i18n
-            - run: sed -i 's/const char\* Ion::fccId() { return "NA"; }/const char* Ion::fccId() { return "Build by Shevon"; }/' ion/src/shared/dummy/fcc_id.cpp
-            - run: build/setup.sh --only-simulator
-            - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.zip test.js
-            - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
+                  sed -i 's/const char\* Ion::pcbVersion() { return "00.00"; }/const char* Ion::pcbVersion() { return "build by shevon"; }/' ion/src/shared/dummy/platform_info.cpp
+                    sed -i 's/FccId = "FCC ID"/FccId = "Build info"/' apps/shared.universal.i18n
+                    sed -i 's/const char\* Ion::fccId() { return "NA"; }/const char* Ion::fccId() { return "Build by Shevon"; }/' ion/src/shared/dummy/fcc_id.cpp
+                    build/setup.sh --only-simulator
+                    make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.zip test.js
+                    timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
             - uses: actions/upload-artifact@v3
               with:
                   name: epsilon.js
