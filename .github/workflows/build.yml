@@ -52,7 +52,7 @@ jobs:
         - uses: actions/upload-artifact@v2
           with:
             name: epsilon-android.apk
-            path: output/release/simulator/android/epsilon.apk
+            path: epsilon/output/release/simulator/android/epsilon.apk
     web:
         name: Build latest epsilon.js
         runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
