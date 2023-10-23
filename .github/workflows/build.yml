@@ -41,7 +41,7 @@ jobs:
     release:
         # job's name
         name: build and release electron app
-
+        needs: web
         # the type of machine to run the job on
         runs-on: ${{ matrix.os }}
 
