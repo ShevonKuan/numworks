@@ -49,7 +49,7 @@ jobs:
                         pypng \
                         stringcase
                      make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk test.apk
-        - uses: actions/upload-artifact@2
+        - uses: actions/upload-artifact@v2
           with:
             name: epsilon-android.apk
             path: output/release/simulator/android/epsilon.apk
