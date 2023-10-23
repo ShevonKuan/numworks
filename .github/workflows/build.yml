@@ -9,7 +9,7 @@ on:
         tags: [v*]
     schedule:
         - cron: "0 0 */5 * *"
-
+    workflow_dispatch:
 # Workflow's jobs
 jobs:
     web:
