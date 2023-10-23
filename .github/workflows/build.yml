@@ -12,6 +12,47 @@ on:
     workflow_dispatch:
 # Workflow's jobs
 jobs:
+    android:
+        name: Build latest android app
+        runs-on: ubuntu-latest
+        if: ${{ (github.repository != 'numworks/epsilon-internal') }}
+        steps:
+        - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
+        - uses: actions/checkout@v3
+        - run: |
+                  git submodule init
+                  git submodule update
+                  cd epsilon
+                  latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+                  git checkout $latest_tag
+                  sed -i 's/const char\* Ion::pcbVersion() { return "00.00"; }/const char* Ion::pcbVersion() { return "build by shevon"; }/' ion/src/shared/dummy/platform_info.cpp
+                    sed -i 's/FccId = "FCC ID"/FccId = "Build info"/' apps/shared.universal.i18n
+                    sed -i 's/const char\* Ion::fccId() { return "NA"; }/const char* Ion::fccId() { return "Build by Shevon"; }/' ion/src/shared/dummy/fcc_id.cpp
+                    sudo apt-get install \
+                    build-essential \
+                    clang-format \
+                    git \
+                    imagemagick \
+                    libfreetype6-dev \
+                    libjpeg-dev \
+                    libpng-dev \
+                    libx11-dev \
+                    libxext-dev \
+                    pkg-config \
+                    python3 \
+                    python3-pip \
+                    python3-venv
+                    python3 -m venv .venv
+                    .venv/bin/pip3 install \
+                        lz4 \
+                        pyelftools \
+                        pypng \
+                        stringcase
+                     make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk test.apk
+        - uses: actions/upload-artifact@2
+          with:
+            name: epsilon-android.apk
+            path: output/release/simulator/android/epsilon.apk
     web:
         name: Build latest epsilon.js
         runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
@@ -56,6 +97,11 @@ jobs:
               with:
                   name: epsilon.js
                   path: epsilon/output/release/simulator/web/epsilon.js
+                  retention-days: 7
+            - uses: actions/upload-artifact@v3
+              with:
+                  name: epsilon-web.zip
+                  path: epsilon/output/release/simulator/web/epsilon.zip
                   retention-days: 7
 
     release:
@@ -145,7 +191,10 @@ jobs:
               with:
                   tag_name: ${{ github.ref }}
                   body: psilon Version ${{ steps.build_epsilonjs.outputs.latest_tag }}
-                  files: "dist/**"
+                  files: |
+                    dist/**
+                    epsilon-web.zip
+                    epsilon-android.apk
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
