@@ -30,6 +30,7 @@
         "build-linux": "electron-builder --linux"
     },
     "dependencies": {
-        "electron-store": "^8.0.1"
+        "electron-store": "^8.0.1",
+        "update-electron-app": "^2.0.1"
     }
 }

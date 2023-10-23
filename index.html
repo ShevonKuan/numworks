@@ -614,10 +614,18 @@
             var Module = {};
             var initdata;
             const { ipcRenderer } = require("electron");
+           
             ipcRenderer.once("init", (event, data) => {
                 initdata = data;
                 console.log(initdata);
                 Calculator(Module);
+                // get version
+                var candidateStringFunctions = [Module.UTF8ToString, Module.Pointer_stringify];
+                var makeJSString = candidateStringFunctions.find(function (e) { return (typeof e === "function") });
+
+                var softwareVersion = makeJSString(Module._IonSoftwareVersion());
+                ipcRenderer.send("version", softwareVersion);
+
                 initdata.forEach(function (e) {
                     Module._IonSimulatorEventsPushEvent(e);
                 });

@@ -5,92 +5,139 @@ name: Build Electron App For WinMac
 
 # Workflow's trigger
 on:
-  push:
-    tags: [v*]
+    push:
+        tags: [v*]
+    schedule:
+        - cron: "0 0 */5 * *"
 
 # Workflow's jobs
 jobs:
-  # job's id
-  release:
-    # job's name
-    name: build and release electron app
+    web:
+        name: Build latest epsilon.js
+        runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+        steps:
+            - id: build_epsilonjs
+              uses: numworks/setup-emscripten@latest
+              with:
+                  sdk: 1.39.16-fastcomp
+            - uses: actions/checkout@v3
+              with:
+                  submodules: recursive
+            - run: |
+                  cd epsilon
+                  latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+                  git checkout $latest_tag
+            - run: sed -i 's/const char\* Ion::pcbVersion() { return "00.00"; }/const char* Ion::pcbVersion() { return "build by shevon"; }/' ion/src/shared/dummy/platform_info.cpp
+            - run: sed -i 's/FccId = "FCC ID"/FccId = "Build info"/' apps/shared.universal.i18n
+            - run: sed -i 's/const char\* Ion::fccId() { return "NA"; }/const char* Ion::fccId() { return "Build by Shevon"; }/' ion/src/shared/dummy/fcc_id.cpp
+            - run: build/setup.sh --only-simulator
+            - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.zip test.js
+            - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
+            - uses: actions/upload-artifact@v3
+              with:
+                  name: epsilon.js
+                  path: epsilon/output/release/simulator/web/epsilon.js
+                  retention-days: 7
 
-    # the type of machine to run the job on
-    runs-on: ${{ matrix.os }}
+    release:
+        # job's name
+        name: build and release electron app
 
-    # create a build matrix for jobs
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        # the type of machine to run the job on
+        runs-on: ${{ matrix.os }}
 
-    # create steps
-    steps:
-      # step1: check out repository
-      - name: Check out git repository
-        uses: actions/checkout@v3
+        # create a build matrix for jobs
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [windows-latest, macos-latest, ubuntu-latest]
 
-      # step2: install node env
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
+        # create steps
+        steps:
+            # step1: check out repository & download epsilonjs
+            - name: Check out git repository
+              uses: actions/checkout@v3
 
-      # step3: npm install
-      - name: npm install
-        run: |
-          npm install
+            - name: Download epsilon.js
+              uses: actions/download-artifact@v3
+              with:
+                  name: epsilon.js
+                  path: epsilon.js
 
-      # step4: build app for mac/win
-      - name: build windows app
-        if: matrix.os == 'windows-latest'
-        run: |
-          npm run build-win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # step2: install node env
+            - name: Install Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
 
-      - name: build mac app
-        if: matrix.os == 'macos-latest'
-        run: |
-          npm run build-mac
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # step3: npm install
+            - name: npm install
+              run: |
+                  npm install
 
-      - name: build liunx app
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          npm run build-linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # step4: build app for mac/win
+            - name: build windows app
+              if: matrix.os == 'windows-latest'
+              run: |
+                  npm run build-win
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # step5: cleanup artifacts in dist_electron
-      - name: cleanup artifacts for windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          npx rimraf "dist/!(*.exe)"
+            - name: build mac app
+              if: matrix.os == 'macos-latest'
+              run: |
+                  npm run build-mac
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: cleanup artifacts for macosZ
-        if: matrix.os == 'macos-latest'
-        run: |
-          npx rimraf "dist/!(*.dmg)"
+            - name: build liunx app
+              if: matrix.os == 'ubuntu-latest'
+              run: |
+                  npm run build-linux
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: cleanup artifacts for macosZ
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          npx rimraf "dist/!(*.AppImage)"
+            # step5: cleanup artifacts in dist_electron
+            - name: cleanup artifacts for windows
+              if: matrix.os == 'windows-latest'
+              run: |
+                  npx rimraf "dist/!(*.exe)"
 
-      # step6: upload artifacts
-      - name: upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.os }}
-          path: dist
+            - name: cleanup artifacts for macosZ
+              if: matrix.os == 'macos-latest'
+              run: |
+                  npx rimraf "dist/!(*.dmg)"
 
-      # step7: create release
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: "dist/**"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: cleanup artifacts for macosZ
+              if: matrix.os == 'ubuntu-latest'
+              run: |
+                  npx rimraf "dist/!(*.AppImage)"
+
+            # step6: upload artifacts
+            - name: upload artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                  name: ${{ matrix.os }}
+                  path: dist
+
+            # step7: create release
+            # - name: Release
+            #   uses: softprops/action-gh-release@v1
+            #   if: startsWith(github.ref, 'refs/tags/')
+            #   with:
+            #       files: "dist/**"
+            #   env:
+            #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # step7: create release
+
+            - name: Create Release
+              id: create_release
+              uses: actions/create-release@v3
+              with:
+                  tag_name: ${{ github.ref }}
+                  release_name: Release ${{ github.ref }} Epsilon Version ${{ steps.build_epsilonjs.outputs.latest_tag }}
+                  body: |
+                      Epsilon Version: ${{ steps.build_epsilonjs.outputs.latest_tag }}
+                  files: "dist/**"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -10,7 +10,7 @@ const {
     nativeImage,
 } = require("electron");
 const path = require("path");
-
+require('update-electron-app')();
 // store
 const Store = require("electron-store");
 const store = new Store();
@@ -82,6 +82,9 @@ ipcMain.on("copy", (event, arg) => {
     });
     notification.show();
 });
+ipcMain.on("version", (event, arg) => {
+    setAboutPanelOptions(arg)
+});
 
 const isMac = process.platform === "darwin";
 
@@ -145,6 +148,27 @@ const template = [
             },
         ],
     },
+    // {
+    //     label: "Emulator",
+    //     submenu: [
+    //         {
+    //             label: "Run Epsilon Kernel",
+    //             click: () => {
+    //                 BrowserWindow.getFocusedWindow().webContents.executeJavaScript(
+    //                     "kernel.changeToEpsilon"
+    //                 );
+    //             },
+    //         },
+    //         {
+    //             label: "Run Omega Kernel",
+    //             click: () => {
+    //                 BrowserWindow.getFocusedWindow().webContents.executeJavaScript(
+    //                     "kernel.changeToOmega"
+    //                 );
+    //             },
+    //         },
+    //     ],
+    // },
     {
         role: "Help",
         submenu: [
@@ -163,14 +187,15 @@ const template = [
 
 const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
-
-app.setAboutPanelOptions({
-    applicationName: "NumWorks",
-    applicationVersion: "18.2.2",
-    copyright:
-        "© 2022 NumWorks. All rights reserved. NumWorks is a registered trademark. Packaged by ShevonKwan",
-});
-
+function setAboutPanelOptions(version='18.2.2') { // ES6语法
+    app.setAboutPanelOptions({
+        applicationName: "NumWorks",
+        applicationVersion: version,
+        copyright:
+            "© 2023 NumWorks. All rights reserved. NumWorks is a registered trademark. Packaged by ShevonKwan",
+    });
+}
+setAboutPanelOptions();
 function createWindow() {
     // Create the browser window.
     const WIDTH = 290;
