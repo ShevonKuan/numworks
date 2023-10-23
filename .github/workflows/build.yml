@@ -211,11 +211,12 @@ jobs:
                   git submodule update
                   cd epsilon
                   echo "::set-output name=latest_tag::$(git describe --tags `git rev-list --tags --max-count=1`)"
+              id: get_version
             - name: Release
               uses: softprops/action-gh-release@v1
               if: startsWith(github.ref, 'refs/tags/')
               with:
-                  body: Updated Epsilon Version ${{ latest_tag }}
+                  body: Updated Epsilon Version ${{ steps.get_version.outputs.latest_tag }}
                   files: |
                     dist/**
                     epsilon-web.zip
@@ -236,3 +237,4 @@ jobs:
             #       files: "dist/**"
             #   env:
             #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            
