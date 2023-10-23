@@ -30,7 +30,26 @@ jobs:
                   sed -i 's/const char\* Ion::pcbVersion() { return "00.00"; }/const char* Ion::pcbVersion() { return "build by shevon"; }/' ion/src/shared/dummy/platform_info.cpp
                     sed -i 's/FccId = "FCC ID"/FccId = "Build info"/' apps/shared.universal.i18n
                     sed -i 's/const char\* Ion::fccId() { return "NA"; }/const char* Ion::fccId() { return "Build by Shevon"; }/' ion/src/shared/dummy/fcc_id.cpp
-                    build/setup.sh --only-simulator
+                    sudo apt-get install \
+                    build-essential \
+                    clang-format \
+                    git \
+                    imagemagick \
+                    libfreetype6-dev \
+                    libjpeg-dev \
+                    libpng-dev \
+                    libx11-dev \
+                    libxext-dev \
+                    pkg-config \
+                    python3 \
+                    python3-pip \
+                    python3-venv
+                    python3 -m venv .venv
+                    .venv/bin/pip3 install \
+                        lz4 \
+                        pyelftools \
+                        pypng \
+                        stringcase
                     make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.zip test.js
                     timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
             - uses: actions/upload-artifact@v3
