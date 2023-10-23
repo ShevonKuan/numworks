@@ -185,12 +185,11 @@ jobs:
                   name: ${{ matrix.os }}
                   path: dist
 
-     release:
-         name: release app
-         runs-on: ubuntu-latest
-         needs: build
-         steps:
-            steps:
+    release:
+        name: release app
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
             - name: Download epsilon.zip
               uses: actions/download-artifact@v3
               with:
