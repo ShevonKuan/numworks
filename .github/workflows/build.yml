@@ -190,11 +190,31 @@ jobs:
         runs-on: ubuntu-latest
         needs: [build, android]
         steps:
-            - name: Download
+            - name: Download epsilon.zip
               uses: actions/download-artifact@v3
               with:
-                  name: *
-                  path: dist
+                  name: epsilon-web.zip
+                  path: epsilon-web.zip
+            - name: Download epsilon.apk
+              uses: actions/download-artifact@v3
+              with:
+                  name: epsilon-android.apk
+                  path: epsilon-android.apk
+            - name: Download windows-latest
+              uses: actions/download-artifact@v3
+              with:
+                  name: windows-latest
+                  path: windows-latest
+            - name: Download macos-latest
+              uses: actions/download-artifact@v3
+              with:
+                  name: macos-latest
+                  path: macos-latest
+            - name: Download ubuntu-latest
+              uses: actions/download-artifact@v3
+              with:
+                  name: ubuntu-latest
+                  path: ubuntu-latest
             - uses: actions/checkout@v3
             - run: |
                   git submodule init
@@ -208,7 +228,11 @@ jobs:
               with:
                   body: Updated Epsilon Version ${{ steps.get_version.outputs.latest_tag }}
                   files: |
-                    dist/*
+                    windows-latest
+                    macos-latest
+                    ubuntu-latest
+                    epsilon-web.zip
+                    epsilon-android.apk
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
