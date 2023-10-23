@@ -1,0 +1,6 @@
+[submodule "epsilon"]
+	path = epsilon
+	url = https://github.com/numworks/epsilon
+[submodule "Omega"]
+	path = Omega
+	url = https://github.com/Omega-Numworks/Omega.git
