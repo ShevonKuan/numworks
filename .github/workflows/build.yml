@@ -189,8 +189,8 @@ jobs:
             - name: Release
               uses: softprops/action-gh-release@v1
               with:
-                  tag_name: ${{ github.ref }}
-                  body: psilon Version ${{ steps.build_epsilonjs.outputs.latest_tag }}
+                  tag_name: ${{ github.ref }}-E-${{ steps.build_epsilonjs.outputs.latest_tag }}
+                  body: epsilon Version ${{ steps.build_epsilonjs.outputs.latest_tag }}
                   files: |
                     dist/**
                     epsilon-web.zip
