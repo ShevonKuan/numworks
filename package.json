@@ -1,6 +1,6 @@
 {
     "name": "NumWorks",
-    "version": "",
+    "version": "1.0.0",
     "description": "NumWorks graphing calculator",
     "main": "main.js",
     "repository": "https://github.com/ShevonKuan/numworks",
