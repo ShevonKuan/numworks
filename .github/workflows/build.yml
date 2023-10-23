@@ -198,8 +198,8 @@ jobs:
             - name: Download epsilon.apk
               uses: actions/download-artifact@v3
               with:
-                  name: epsilon.apk
-                  path: epsilon.apk
+                  name: epsilon-android.apk
+                  path: epsilon-android.apk
             - name: Download dist
               uses: actions/download-artifact@v3
               with:
@@ -237,4 +237,3 @@ jobs:
             #       files: "dist/**"
             #   env:
             #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            
