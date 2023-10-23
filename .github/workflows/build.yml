@@ -22,7 +22,7 @@ jobs:
                   sdk: 1.39.16-fastcomp
             - uses: actions/checkout@v3
             - run: |
-                  git submodule init https://github.com/numworks/epsilon
+                  git submodule init
                   cd epsilon
                   latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
                   git checkout $latest_tag
